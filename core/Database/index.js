@@ -1,4 +1,5 @@
-const { Postgres } = require('./handlre');
+
+const { Postgres } = require('./handler');
 const database = require('./secrets');
 
 const db = new Postgres(
