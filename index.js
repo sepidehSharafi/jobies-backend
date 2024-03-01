@@ -1,5 +1,5 @@
 const express = require('express');
-const { sql, query } = require('./core/Database');
+const { sql } = require('./core/Database');
 
 const app = express();
 app.use(express.json());
@@ -17,6 +17,11 @@ const port = 3000;
 
 app.get('/users', async (_, response) => {
     const tweets = await sql`select * from users`;
+    response.send(tweets);
+});
+
+app.get('/posts', async (_, response) => {
+    const tweets = await sql`select * from posts`;
     response.send(tweets);
 });
 
@@ -85,6 +90,7 @@ app.get('/books/search', async (request, response) => {
     try {
         const title = request.query.postTitle;
         const likeSort = request.query.likes_count;
+        const created_at = request.query.created_at;
 
         let sql = `SELECT * FROM posts`
         let filters = [];
@@ -92,6 +98,9 @@ app.get('/books/search', async (request, response) => {
         if (title) {
             filters.push(` postTitle LIKE '%${title}%' `)
         }
+        
+        if(created_at) {
+        filters.push(` created_at = ${created_at}`)}
 
         if(likeSort) sqlSort += sql` ORDER BY likes_count ${likeSort}`;
         const { rows: posts } = sqlSort
